@@ -1,6 +1,3 @@
-import { useState } from "react";
-
-
 export const isStrongPassword = ( password ) => {
     
 
@@ -10,7 +7,7 @@ export const isStrongPassword = ( password ) => {
         uppercaseRegex: /[A-Z]/,
         numberRegex: /[0-9]/,
         specialCharRegex: /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/
-    }
+    };
     
     let length = false;
     let lowercase = false;
@@ -39,7 +36,7 @@ export const isStrongPassword = ( password ) => {
         lowercase,
         uppercase,
         number,
-        specialChar
+        specialChar,
     }
 
 };

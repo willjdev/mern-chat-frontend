@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.custom-bullet::before {
+    content: 'x';
+    margin-right: 5px;
+    color: red; 
+}

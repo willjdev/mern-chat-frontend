@@ -1,8 +1,9 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../../context/UserContext";
-import { registerApi } from "../../api/registerApi";
 import { isStrongPassword } from "../../helpers/checkPassword";
-import './style.css';
+import { RegisterRequirements } from "../../components/RegisterRequirements";
+import { loginRegister } from "../../helpers/loginRegister";
+
 
 export const RegisterLoginForm = () => {
 
@@ -27,19 +28,10 @@ export const RegisterLoginForm = () => {
     env.preventDefault();
     handleUsername();
     const { length, lowercase, uppercase, number, specialChar } = isStrongPassword( password )
-    handlePassword( length, lowercase, uppercase, number, specialChar );
+    const correctPassword = handlePassword( length, lowercase, uppercase, number, specialChar );
 
-    if ( length, lowercase, uppercase, number, specialChar && username.length >= 1 ) {
-      const url = isLoginOrRegister === 'register' ? '/api/auth/register' : '/api/auth/login'
-      try {
-        const { data } = await registerApi.post( url, { username, password });
-        setLoggedInUsername( username );
-        setId( data._id );
-        console.log(`Hola, ${username}, identificado con ID ${data._id}`)
-      } catch (error) {
-        console.log(error);
-      }
-    } 
+    if (correctPassword && usernameLength ) loginRegister( username, password, correctPassword, usernameLength, isLoginOrRegister, setLoggedInUsername, setId );
+
   };
 
   useEffect( () => {
@@ -71,18 +63,24 @@ export const RegisterLoginForm = () => {
     setUppercase( uppercase );
     setNumber( number );
     setSpecialChar( specialChar );
+    if ( length, lowercase, uppercase, number, specialChar ) {
+      return true;
+    } else {
+      return false;
+    }
+
   };
 
   const handleUsername = () => {
     setUsernameLength( username.length < 1 ? false : true );
   };
 
-  const handleClickPassword = () => {
-    if ( isLoginOrRegister === 'register' ) setIsClickedPassword( true );
-  };
-
-  const handleClickUsername = () => {
-    if ( isLoginOrRegister === 'register' ) setIsClickedUsername( true );
+  const handleClick = ( type ) => {
+    if ( isLoginOrRegister === 'register' && type === 'password' ) {
+      setIsClickedPassword( true );
+    } else {
+      setIsClickedUsername( true );
+    }
   };
 
   const handleLoginOrRegister = () => {
@@ -99,19 +97,17 @@ export const RegisterLoginForm = () => {
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          onClick={ handleClickUsername }
+          onClick={ handleClick }
           placeholder="Username"
           className="block w-full rounded-sm p-2 mb-2 border"
           ref={ usernameInputRef }
         />
-
-          <div className={`w-full mb-2 p-2 bg-zinc-200 border border-gray-950 shadow-md rounded-sm transition-opacity transform ${ isLoginOrRegister === 'register' && isClickedUsername ? 'opacity-100 translate-y-0 transition duration-500 ease-out' : 'hidden opacity-0 -translate-y-2' }`}>
-            <p className="text-xs font-semibold">Username requirements:</p>
-            <ul className="ml-4 text-xs">
-              <li className={usernameLength ? 'list-disc' : 'text-red-500 custom-bullet'}>Username most be at least 1 character long</li>
-            </ul>
-          </div>
-
+          <RegisterRequirements 
+            isLoginOrRegister={ isLoginOrRegister } 
+            isClicked={ isClickedUsername } 
+            type={'Username'} 
+            username={ usernameLength } 
+          />
         
         <input
           type="password"
@@ -120,19 +116,18 @@ export const RegisterLoginForm = () => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           className="block w-full rounded-sm p-2 mb-2 border transition ease-in-out"
-          onClick={ handleClickPassword }
+          onClick={ () => handleClick('password') }
         />
-
-        <div className={`w-full mb-2 p-2 bg-zinc-200 border border-gray-950 shadow-md rounded-sm transition-opacity transform ${ isLoginOrRegister === 'register' && isClickedPassword ? 'opacity-100 translate-y-0 transition duration-500 ease-out' : 'hidden opacity-0 -translate-y-2' }`}>
-          <p className="text-xs font-semibold">Password requirements:</p>
-          <ul className="ml-4 text-xs">
-            <li className={lengthT ? 'list-disc' : 'text-red-500 custom-bullet'}>Most be at least 8 characters long</li>
-            <li className={uppercaseT ? 'list-disc' : 'text-red-500 custom-bullet'}>Most contain at least one capital letter</li>
-            <li className={lowercaseT ? 'list-disc' : 'text-red-500 custom-bullet'}>Most contain at least one lower-case letter</li>
-            <li className={numberT ? 'list-disc' : 'text-red-500 custom-bullet'}>Most contain at least one number</li>
-            <li className={specialCharT ? 'list-disc' : 'text-red-500 custom-bullet'}>Most contain at least one special characters</li>
-          </ul>
-        </div>
+          <RegisterRequirements 
+            isLoginOrRegister={ isLoginOrRegister } 
+            isClicked={ isClickedPassword } 
+            type={'Password'} 
+            lengthT={ lengthT } 
+            uppercaseT={ uppercaseT } 
+            lowercaseT={ lowercaseT } 
+            numberT={ numberT } 
+            specialCharT={ specialCharT } 
+          />
 
         <button className="bg-blue-500 text-white block w-full rounded-sm p-2" ref={ submitButtonRef }>
           { isLoginOrRegister === 'register' ? 'Register' : 'Login' }
