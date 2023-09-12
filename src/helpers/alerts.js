@@ -1,10 +1,10 @@
 import Swal from 'sweetalert2';
 
-export const alert = () => {
+export const alert = ( type ) => {
 
     Swal.fire({
       title: 'Error!',
-      text: 'User not found',
+      text: type === 'register' ? 'Wrong register data' : 'User not found',
       icon: 'error',
       confirmButtonText: 'Try again'
     });

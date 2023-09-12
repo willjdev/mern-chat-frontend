@@ -1,9 +1,8 @@
+import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
+import { uniqBy } from "lodash";
 import { Logo } from "../components/Logo";
 import { UserContext } from "../context/UserContext";
-import { uniqBy } from "lodash";
-import axios from "axios";
-import { registerApi } from "../api/registerApi";
 import { Contact } from "../components/Contact";
 
 
@@ -14,12 +13,9 @@ export const Chat = () => {
   const [offlinePeople, setOfflinePeople] = useState({});
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [newMessageText, setNewMessageText] = useState('');
-  const [loggedOut, setLoggedOut] = useState( null );
   const { username, id, setId, setUsername } = useContext( UserContext );
   const [messages, setMessages] = useState([]);
   const divUnderMessages = useRef();
-
-  const loggedOutClient = [];
 
   useEffect( () => {
     connectToWs(); 
@@ -58,15 +54,13 @@ export const Chat = () => {
   };
 
   const logout = () => {
-    //ws.send( JSON.stringify({ id }) );
     console.log(`Hasta pronto, ${username} identificado con ID ${id}`)
     axios.post( '/api/auth/logout' ).then( () => {
       ws.close();
-      //setWs( null );
+      setWs( null );
       setId( null );
       setUsername( null );
     });
-    //window.location.reload(); Revisar gestion del token, dos tokens al mismo tiempo ?
   };
 
   const sendMessage = ( e, file = null ) => {
@@ -157,8 +151,8 @@ export const Chat = () => {
             <Contact
               key={userId}
               id={userId}
-              username={offlinePeople[userId].username}
               onClick={() => setSelectedUserId(userId)}
+              username={offlinePeople[userId].username}
               selected={userId === selectedUserId}
               online={false}
             />

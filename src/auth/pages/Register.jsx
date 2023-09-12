@@ -29,9 +29,7 @@ export const RegisterLoginForm = () => {
     handleUsername();
     const { length, lowercase, uppercase, number, specialChar } = isStrongPassword( password )
     const correctPassword = handlePassword( length, lowercase, uppercase, number, specialChar );
-
-    if (correctPassword && usernameLength ) loginRegister( username, password, correctPassword, usernameLength, isLoginOrRegister, setLoggedInUsername, setId );
-
+    loginRegister( username, password, isLoginOrRegister, setLoggedInUsername, setId, correctPassword, usernameLength ); 
   };
 
   useEffect( () => {
