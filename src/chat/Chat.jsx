@@ -20,11 +20,13 @@ export const Chat = () => {
   const { username, id, setId, setUsername } = useContext( UserContext );
   const divUnderMessages = useRef();
 
+  // Handle the Websocket initialization and connection
   useEffect( () => {
     connectToWs( handleMessage, setWs ); 
   }, [selectedUserId]);
 
 
+  // Handle people online on the server
   const showOnlinePeople = ( peopleArray ) => {
     const people = {};
     peopleArray.forEach( ({ userId, username }) => {
@@ -33,6 +35,7 @@ export const Chat = () => {
     setOnlinePeople( people );
   }
 
+  // Handle WS server messages 
   const handleMessage = ( e ) => {
     const messageData = JSON.parse( e.data );
     console.log({ e, messageData })
@@ -45,6 +48,7 @@ export const Chat = () => {
     }
   };
 
+  // Handle the logout from the server 
   const logout = () => {
     console.log(`Hasta pronto, ${username} identificado con ID ${id}`)
     axios.post( '/api/auth/logout' ).then( () => {
@@ -54,6 +58,7 @@ export const Chat = () => {
     });
   };
 
+  // Handle the sending of texts and files
   const sendMessage = async ( e, file = null ) => {
     if ( e ) e.preventDefault();
     if ( !file && newMessageText === '' ) return;
@@ -80,6 +85,7 @@ export const Chat = () => {
     }
   };
 
+  // Handle the files to be sent
   const sendFile = ( e ) => {
     const reader = new FileReader();
     reader.readAsDataURL( e.target.files[0] );
@@ -93,6 +99,7 @@ export const Chat = () => {
     }
   };
   
+  // Handle the chat view to move to new messages
   useEffect( () => {
     const div = divUnderMessages.current;
     if ( div ) {
@@ -100,6 +107,7 @@ export const Chat = () => {
     }
   }, [messages]);
 
+  //Handle offline people
   useEffect( () => {
     axios.get( '/api/auth/people').then( res => {
       const offlinePeopleArr = res.data
@@ -113,6 +121,7 @@ export const Chat = () => {
       });
   }, [onlinePeople]);
 
+  // Handle the messages stored in db
   useEffect( () => {
     if ( selectedUserId ) {
       axios.get( 'api/events/messages/' + selectedUserId ).then( res => {
@@ -121,15 +130,12 @@ export const Chat = () => {
     }
   }, [selectedUserId]);
 
-
+  // Handle that the user doesn't see himself in the list of people onlone
   const onlinePeopleExclOurUser = { ...onlinePeople };
   delete onlinePeopleExclOurUser[id];
 
+  // Handle duplicated messages
   const messagesWithoutDupes = uniqBy( messages, '_id' );
-  useEffect( () => {
-    console.log(messagesWithoutDupes)
-  }, [messages])
-
 
   return (
     <div className="flex h-screen">
