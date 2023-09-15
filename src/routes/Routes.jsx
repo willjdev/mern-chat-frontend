@@ -6,7 +6,7 @@ import { Chat } from "../chat/Chat";
 
 export const Routes = () => {
 
-  const { username, id } = useContext( UserContext );
+  const { username } = useContext( UserContext );
 
   
   if ( username ) {

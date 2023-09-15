@@ -84,20 +84,6 @@ export const Chat = () => {
       }]));
     }
   };
-
-  // Handle the files to be sent
-  const sendFile = ( e ) => {
-    const reader = new FileReader();
-    reader.readAsDataURL( e.target.files[0] );
-    console.log(e.target.files[0])
-    reader.onload = () => {
-      sendMessage( null, { 
-        name: e.target.files[0].name,
-        data: reader.result 
-      })
-      e.target.value = null;
-    }
-  };
   
   // Handle the chat view to move to new messages
   useEffect( () => {
@@ -197,7 +183,7 @@ export const Chat = () => {
           )}
           {!!selectedUserId && (
             <form className="flex gap-2" onSubmit={sendMessage}>
-              <Form newMessageText={ newMessageText } setNewMessageText={ setNewMessageText } sendFile={ sendFile } />
+              <Form newMessageText={ newMessageText } setNewMessageText={ setNewMessageText } sendMessage={ sendMessage } />
             </form>
           )}
         </div>

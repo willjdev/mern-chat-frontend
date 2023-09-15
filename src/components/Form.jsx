@@ -1,6 +1,20 @@
 
 
-export const Form = ({ newMessageText, setNewMessageText, sendFile}) => {
+export const Form = ({ newMessageText, setNewMessageText, sendMessage}) => {
+
+  // Handle the files to be sent
+  const sendFile = ( e ) => {
+    const reader = new FileReader();
+    reader.readAsDataURL( e.target.files[0] );
+    reader.onload = () => {
+        sendMessage( null, { 
+        name: e.target.files[0].name,
+        data: reader.result 
+        })
+        e.target.value = null;
+    }
+};
+
   return (
     <>
       <input
