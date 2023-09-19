@@ -22,9 +22,21 @@ export const Chat = () => {
 
   // Handle the Websocket initialization and connection
   useEffect( () => {
-    connectToWs( handleMessage, setWs ); 
+    //connectToWs( handleMessage, setWs ); 
+    connectToWs();
   }, [selectedUserId]);
 
+  const connectToWs = () => {
+    const ws = new WebSocket('ws://localhost:4000');
+    setWs( ws );
+    ws.addEventListener( 'message', handleMessage );
+    ws.addEventListener( 'close', () => {
+      setTimeout(() => {
+        console.log('Disconnected. Trying to reconnect.');
+        connectToWs();
+      }, 1000);
+    });
+  };
 
   // Handle people online on the server
   const showOnlinePeople = ( peopleArray ) => {
@@ -37,13 +49,15 @@ export const Chat = () => {
 
   // Handle WS server messages 
   const handleMessage = ( e ) => {
+    console.log(e)
     const messageData = JSON.parse( e.data );
     console.log({ e, messageData })
     if ( 'online' in messageData ) {
       showOnlinePeople( messageData.online );
     } else if ( 'text' in messageData ) {
       if ( messageData.sender === selectedUserId ) {
-        setMessages( prev => ([...prev, { ...messageData }]) )
+        setMessages( prev => ([...prev, { ...messageData }]) );
+        console.log(messages)
       }
     }
   };
@@ -123,6 +137,10 @@ export const Chat = () => {
   // Handle duplicated messages
   const messagesWithoutDupes = uniqBy( messages, '_id' );
 
+  /* useEffect( () => {
+    console.log(messagesWithoutDupes)
+  }, [])
+ */
   return (
     <div className="flex h-screen">
       <div className="bg-white w-1/3 flex flex-col">
@@ -176,7 +194,7 @@ export const Chat = () => {
           {!!selectedUserId &&  
             (<div className="relative h-full">
               <div className="overflow-y-scroll absolute top-0 left-0 right-0 bottom-2">
-                <ChatMessages messagesWithoutDupes={ messagesWithoutDupes } id={ id } />
+                { messagesWithoutDupes && <ChatMessages messagesWithoutDupes={ messagesWithoutDupes } id={ id } /> }
                 <div ref={divUnderMessages}></div>
               </div>
             </div> 
