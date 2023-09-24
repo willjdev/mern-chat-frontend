@@ -4,7 +4,7 @@ export const Form = ({ newMessageText, setNewMessageText, sendMessage}) => {
 
   // Handle the files to be sent
   const sendFile = ( e ) => {
-    console.log(e.target.files[0])
+    //console.log(e.target.files[0])
     const reader = new FileReader();
     reader.readAsDataURL( e.target.files[0] );
     reader.onload = () => {
@@ -32,11 +32,11 @@ export const Form = ({ newMessageText, setNewMessageText, sendMessage}) => {
             body: formData
         });
 
-        console.log( resp );
+        //console.log( resp );
         if ( !resp.ok ) throw new Error('Couldn\'t upload file');
 
         const cloudResp = await resp.json();
-        console.log({ cloudResp });
+        //console.log({ cloudResp });
 
         sendMessage( null, {
           name: e.target.files[0].name,

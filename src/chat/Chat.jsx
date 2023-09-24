@@ -83,12 +83,12 @@ export const Chat = () => {
     }));
     
     if ( file ) {
-        console.log('Sent')
+        //console.log('Sent')
           axios.get( 'api/events/messages/' + selectedUserId ).then( res => {
             setMessages( res.data );
           });
     } else {
-      console.log('Sent without file')
+      //console.log('Sent without file')
       setNewMessageText('');
       setMessages( prev => ([...prev, { 
         text: newMessageText, 
@@ -137,10 +137,6 @@ export const Chat = () => {
   // Handle duplicated messages
   const messagesWithoutDupes = uniqBy( messages, '_id' );
 
-  /* useEffect( () => {
-    console.log(messagesWithoutDupes)
-  }, [])
- */
   return (
     <div className="flex h-screen">
       <div className="bg-white w-1/3 flex flex-col">
