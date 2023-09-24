@@ -27,7 +27,7 @@ export const Chat = () => {
   }, [selectedUserId]);
 
   const connectToWs = () => {
-    const ws = new WebSocket('ws://localhost:4000');
+    const ws = new WebSocket( import.meta.env.VITE_API_WS_URL );
     setWs( ws );
     ws.addEventListener( 'message', handleMessage );
     ws.addEventListener( 'close', () => {
@@ -49,15 +49,15 @@ export const Chat = () => {
 
   // Handle WS server messages 
   const handleMessage = ( e ) => {
-    console.log(e)
+    //console.log(e)
     const messageData = JSON.parse( e.data );
-    console.log({ e, messageData })
+    //console.log({ e, messageData })
     if ( 'online' in messageData ) {
       showOnlinePeople( messageData.online );
     } else if ( 'text' in messageData ) {
       if ( messageData.sender === selectedUserId ) {
         setMessages( prev => ([...prev, { ...messageData }]) );
-        console.log(messages)
+        //console.log(messages)
       }
     }
   };
